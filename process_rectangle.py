@@ -55,8 +55,8 @@ def rectangle_to_aerial(wgs84_coors):
 
     # Combine tiles into one .tif
     tif_path = join(DOWNLOADS_FOLDER, "aerial.tif")
-    combine_tiles_to_tif(tiles, tif_path)
-    return tif_path
+    image = combine_tiles_to_tif(tiles, tif_path)
+    return tif_path, image
     
 def download_tile(x, y, zoom):
     # Van xy-coördinaten in RD naar XY-index van een tile bij zoomniveau Z 
@@ -71,7 +71,7 @@ def download_tile(x, y, zoom):
     response = requests.get(url)
 
     if response.status_code == 200:
-        path = join(DOWNLOADS_FOLDER, 'tiles', f'{x}_{y}.png')
+        path = join(DOWNLOADS_FOLDER, 'pdok_data', f'{x}_{y}.png')
         with open(path, 'wb') as f:
             f.write(response.content)
         return path
@@ -100,3 +100,4 @@ def combine_tiles_to_tif(tile_dict, output_path):
     
     # Save the combined image as a .tif file
     combined_image.save(output_path, format="TIFF")
+    return combined_image
