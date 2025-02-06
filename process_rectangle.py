@@ -11,11 +11,7 @@ import requests
 from tqdm import tqdm
 from PIL import Image
 
-# Define some globals
-DOWNLOADS_FOLDER = join('.','downloads')
-ZOOM = 16
-
-def rectangle_to_aerial(wgs84_coors):
+def rectangle_to_aerial(wgs84_coors, ZOOM, OUTPUT_F):
     """
     IN: list of coordinates representing the corners of a rectangle in wgs-84
     OUT: aerial photo of the rectangle area as a .tif
@@ -50,15 +46,15 @@ def rectangle_to_aerial(wgs84_coors):
         for j in range(len(grid[i])):
             print (f'downloading tile {i*8 + j+1}/{len(grid) * len(grid[0])}')
             point = grid[i][j]
-            path = download_tile(point[0],point[1],ZOOM)
+            path = download_tile(point[0],point[1],ZOOM, OUTPUT_F)
             tiles[(i,j)] = path
 
     # Combine tiles into one .tif
-    tif_path = join(DOWNLOADS_FOLDER, "aerial.tif")
+    tif_path = join(OUTPUT_F, "aerial.tif")
     image = combine_tiles_to_tif(tiles, tif_path)
     return tif_path, image
     
-def download_tile(x, y, zoom):
+def download_tile(x, y, zoom, OUTPUT_F):
     # Van xy-coördinaten in RD naar XY-index van een tile bij zoomniveau Z 
     # (Bron: https://geoforum.nl/t/tile-column-en-tile-row-op-basis-van-coordinaten-x-y-z/8533/7)
     t = (903401.92-22598.08) * (0.5**zoom)  # 'tegelgrootte in meters'
@@ -71,7 +67,7 @@ def download_tile(x, y, zoom):
     response = requests.get(url)
 
     if response.status_code == 200:
-        path = join(DOWNLOADS_FOLDER, 'pdok_data', f'{x}_{y}.png')
+        path = join(OUTPUT_F, 'pdok_data', f'{x}_{y}.png')
         with open(path, 'wb') as f:
             f.write(response.content)
         return path
