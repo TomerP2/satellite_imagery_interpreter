@@ -3,7 +3,7 @@ import math
 import requests
 import pprint
 import math
-from os.path import join
+import os
 # External modules
 import numpy as np
 from pyproj import Transformer
@@ -33,6 +33,12 @@ def rectangle_to_aerial(
     image : PIL.Image.Image
         The combined aerial image as a PIL Image object.
     """
+    # Create necessary folders
+    for subfolder in ['pdok_data','tiles']:
+        path = os.path.join(output_folder, subfolder)
+        if not os.path.exists(path):
+            os.makedirs(path)
+    
     # Reproject coordinates from wgs84 to rd_new.
     transformer = Transformer.from_crs("EPSG:4326", "EPSG:28992", always_xy=True)
     rd_new_coords = [transformer.transform(lon, lat) for lon, lat in wgs84_coors]
@@ -67,7 +73,7 @@ def rectangle_to_aerial(
             tiles[(i,j)] = path
 
     # Combine tiles into one .tif
-    tif_path = join(output_folder, "aerial.tif")
+    tif_path = os.path.join(output_folder, "aerial.tif")
     image = combine_tiles_to_tif(tiles, tif_path)
     return tif_path, image
     
@@ -84,7 +90,7 @@ def download_tile(x, y, zoom, OUTPUT_F):
     response = requests.get(url)
 
     if response.status_code == 200:
-        path = join(OUTPUT_F, 'pdok_data', f'{x}_{y}.png')
+        path = os.path.join(OUTPUT_F, 'pdok_data', f'{x}_{y}.png')
         with open(path, 'wb') as f:
             f.write(response.content)
         return path
