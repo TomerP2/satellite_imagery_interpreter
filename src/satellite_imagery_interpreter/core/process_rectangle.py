@@ -11,10 +11,27 @@ import requests
 from tqdm import tqdm
 from PIL import Image
 
-def rectangle_to_aerial(wgs84_coors, ZOOM, OUTPUT_F):
+def rectangle_to_aerial(
+    wgs84_coors: list[tuple[float, float]],
+    zoom_level: int,
+    output_folder: str,
+):
     """
-    IN: list of coordinates representing the corners of a rectangle in wgs-84
-    OUT: aerial photo of the rectangle area as a .tif
+    Parameters
+    ----------
+    wgs84_coors : list of tuple of float
+        The corners of a rectangle in WGS-84 coordinates (longitude, latitude).
+    zoom_level : int
+        Zoom level, determines the quality/resolution of the aerial photo. #TODO Validate this is true. Remove parameter probably.
+    output_folder : str
+        Path to the output folder.
+
+    Returns
+    -------
+    tif_path : str
+        Path to the generated aerial photo (.tif) covering the rectangle area.
+    image : PIL.Image.Image
+        The combined aerial image as a PIL Image object.
     """
     # Reproject coordinates from wgs84 to rd_new.
     transformer = Transformer.from_crs("EPSG:4326", "EPSG:28992", always_xy=True)
@@ -32,7 +49,7 @@ def rectangle_to_aerial(wgs84_coors, ZOOM, OUTPUT_F):
 
     # Calculate tile length/width in meters based on chosen zoom level.
     # Values obtained from https://www.geonovum.nl/uploads/standards/downloads/nederlandse_richtlijn_tiling_-_versie_1.1.pdf
-    meters_per_pixel = (3440.640 / 2**ZOOM)
+    meters_per_pixel = (3440.640 / 2**zoom_level)
     tile_length =  meters_per_pixel * 256
 
     # Create point grid across rectangle. One point per tile.
@@ -46,11 +63,11 @@ def rectangle_to_aerial(wgs84_coors, ZOOM, OUTPUT_F):
         for j in range(len(grid[i])):
             print (f'downloading tile {i*8 + j+1}/{len(grid) * len(grid[0])}')
             point = grid[i][j]
-            path = download_tile(point[0],point[1],ZOOM, OUTPUT_F)
+            path = download_tile(point[0],point[1],zoom_level, output_folder)
             tiles[(i,j)] = path
 
     # Combine tiles into one .tif
-    tif_path = join(OUTPUT_F, "aerial.tif")
+    tif_path = join(output_folder, "aerial.tif")
     image = combine_tiles_to_tif(tiles, tif_path)
     return tif_path, image
     
@@ -76,6 +93,23 @@ def download_tile(x, y, zoom, OUTPUT_F):
 
 
 def combine_tiles_to_tif(tile_dict, output_path):
+    """
+    Combines multiple image tiles into a single TIFF image.
+    Args:
+        tile_dict (dict): A dictionary where keys are (row, col) tuples
+            representing the grid position of each tile, and values are
+            file paths to the corresponding image tiles.
+        output_path (str): The file path where the combined TIFF image
+            will be saved.
+    Returns:
+        PIL.Image.Image: The combined image as a PIL Image object.
+    Notes:
+        - Assumes each tile is 256x256 pixels and arranged in a regular grid.
+        - The function pastes each tile into its correct position based on
+          the (row, col) key.
+        - The output image is saved in TIFF format.
+    """
+
     tile_width = tile_height = 256
     
     # Extract the grid dimensions from the dictionary keys
