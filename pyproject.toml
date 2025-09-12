@@ -1,0 +1,11 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+
+[project]
+name = "project_name"
+version = "0.1.0"
+dependencies = []
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra -q"
