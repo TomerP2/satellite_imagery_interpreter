@@ -169,3 +169,6 @@ cython_debug/
 # Optional: allow other common dependency files
 !/software/python_env/requirements-dev.txt
 !/software/python_env/environment-dev.yml
+
+# Ignore data folder
+data
