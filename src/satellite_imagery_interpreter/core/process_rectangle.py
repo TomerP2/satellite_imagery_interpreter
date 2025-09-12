@@ -15,7 +15,7 @@ def rectangle_to_aerial(
     wgs84_coors: list[tuple[float, float]],
     zoom_level: int,
     output_folder: str,
-):
+    ) -> tuple[str, Image.Image]:
     """
     Parameters
     ----------

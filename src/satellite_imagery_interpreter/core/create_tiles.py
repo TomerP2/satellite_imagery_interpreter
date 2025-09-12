@@ -2,12 +2,18 @@ from PIL import Image
 import numpy as np
 import os
 
-def create_tiles(aerial_img, tile_size_m, overlap_m, zoom, OUTPUT_F):
-    # IN: 
-    # aerial_path: Path to .tif of satellite view of the area
-    # tile_size_m: User input. Height/width of a tile in meters.
-    # overlap_m: User input. Overlap between tiles in meters
-    # zoom: User input. Chosen zoom level.
+def create_tiles(aerial_img: Image, tile_size_m: float, overlap_m: float, zoom: int, OUTPUT_F: str) -> dict:
+    """
+    Args:
+        aerial_img (PIL.Image): Satellite image of the area.
+        tile_size_m (float): Height and width of a tile in meters.
+        overlap_m (float): Overlap between tiles in meters.
+        zoom (int): Chosen zoom level.
+        OUTPUT_F (str): Output folder path.
+
+    Returns:
+        dict: Mapping from tile index to [y, x] coordinates of each tile's start position.
+    """
 
     tiles_f = os.path.join(OUTPUT_F, 'tiles')
     aerial = np.array(aerial_img)
