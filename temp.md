@@ -12,3 +12,7 @@ Some requirments:
 - Use the best practices project structure from https://auth0.com/blog/best-practices-for-flask-api-development/
 - Keep the code as simple as possible.
 - Use leaflet.draw: https://leaflet.github.io/Leaflet.draw/docs/leaflet-draw-latest.html
+
+# Prompt for getting test functions for main functions
+
+I have the function rectangle_to_arial inside 'src\satellite_imagery_interpreter\core\process_rectangle.py'. Write a test function for this function named test_process_rectangle inside the tests folder. Test that the function runs correctly, that the output tif exists, that the Image object has the expected properties such as size. Use pytest good practices: https://docs.pytest.org/en/7.1.x/explanation/goodpractices.html
