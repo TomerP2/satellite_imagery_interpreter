@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 1
+names: ['0']
+
+roboflow:
+  workspace: test-vlslb
+  project: car-owtrd-2we06
+  version: 1
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/test-vlslb/car-owtrd-2we06/dataset/1
