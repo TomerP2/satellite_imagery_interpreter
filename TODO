@@ -1,7 +1,8 @@
 Backlog:
-☐ Write project description in README.md
-To do:
 
+To do:
+☐ Set up train_yolo.ipynb
+☐ Train and save yolo model
 Doing:
 
 Done:
@@ -11,3 +12,6 @@ Paused:
 Blocked:
 
 Cancelled:
+
+Archive:
+  ✔ Write project description in README.md @done(25-09-13 14:41)

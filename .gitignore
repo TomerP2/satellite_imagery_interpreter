@@ -172,3 +172,5 @@ cython_debug/
 
 # Ignore data folder
 data
+# Ignore models folder
+models
