@@ -174,3 +174,8 @@ cython_debug/
 data
 # Ignore models folder
 models
+# Ignore model training data folder
+AI_Model_Training/model_training_data
+
+# Ignore all tiles
+tile_*.png
