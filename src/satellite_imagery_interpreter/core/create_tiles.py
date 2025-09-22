@@ -3,8 +3,12 @@ import numpy as np
 from pathlib import Path
 import os
 
-def create_tiles(aerial_img: Image, tile_size_m: float, overlap_m: float, zoom: int, OUTPUT_F: str) -> dict:
+def create_tiles(aerial_img: Image, tile_size_m: float, overlap_m: float, zoom: int, OUTPUT_F: str) -> Path:
     """
+    Splits input image up into tiles of certain size (in meters) and certain overlap (in meters).
+    
+    Tiles will have name: {xcoor}_{ycoor}.png. xcoor and ycoor are in respect to the input image.
+    
     Args:
         aerial_img (PIL.Image): Satellite image of the area.
         tile_size_m (float): Height and width of a tile in meters.
@@ -13,20 +17,17 @@ def create_tiles(aerial_img: Image, tile_size_m: float, overlap_m: float, zoom: 
         OUTPUT_F (str): Output folder path.
 
     Returns:
-        dict: Mapping from tile index to [y, x] coordinates of each tile's start position.
+        tiles_f: Path to tiles folder
     """
 
     tiles_f = Path(OUTPUT_F) / 'tiles'
     os.mkdir(tiles_f)
     
-    aerial = np.array(aerial_img)
+    aerial_np = np.array(aerial_img)
 
-    aerial_width = int(aerial.shape[0])
-    aerial_height = int(aerial.shape[1])
+    aerial_width = int(aerial_np.shape[0])
+    aerial_height = int(aerial_np.shape[1])
 
-    tiles = []
-    idx_coors = {}
-    
     # Convert inputs in meters to pixels
     m_per_pixel = (3440.640 / 2**zoom) # From https://www.geonovum.nl/uploads/standards/downloads/nederlandse_richtlijn_tiling_-_versie_1.1.pdf
     tile_size = int(tile_size_m / m_per_pixel)
@@ -38,12 +39,10 @@ def create_tiles(aerial_img: Image, tile_size_m: float, overlap_m: float, zoom: 
             # Calculate end indices ensuring not to exceed the image dimensions
             end_x = x + tile_size if (x + tile_size <= aerial_width) else aerial_width
             end_y = y + tile_size if (y + tile_size <= aerial_height) else aerial_height
-            tile = aerial[x:end_x, y:end_y]
-            tiles.append(tile)
-            idx_coors[len(tiles)-1] = [y, x]  # Store the start coordinates of each tile
+            tile = aerial_np[x:end_x, y:end_y]
             
-    # Save each tile as an image
-    for i, tile in enumerate(tiles):
-        im = Image.fromarray(tile)
-        im.save(Path(tiles_f) / f"tile_{i}.png")
-    return idx_coors
+            # Get tile image from np array and save
+            im = Image.fromarray(tile)
+            im.save(Path(tiles_f) / f"{x}_{y}.png")
+        
+    return tiles_f

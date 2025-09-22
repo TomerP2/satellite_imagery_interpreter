@@ -29,18 +29,9 @@ def test_create_tiles(sample_image, tmp_path):
     assert tiles_dir.exists(), "Tiles folder should be created"
 
     # Check that some tiles are written
-    written_tiles = list(tiles_dir.glob("tile_*.png"))
+    written_tiles = list(tiles_dir.glob("*_*.png"))
     assert len(written_tiles) > 0, "At least one tile should be written"
 
-    # Check mapping dictionary structure
-    assert isinstance(result, dict)
-    for idx, coords in result.items():
-        assert isinstance(idx, int)
-        assert isinstance(coords, list)
-        assert len(coords) == 2
-        y, x = coords
-        assert isinstance(x, int) and isinstance(y, int)
-
-    # Check that tile_0.png matches expected dimensions
+    # Check that first tile size is bigger than 0
     first_tile = Image.open(written_tiles[0])
     assert first_tile.size[0] > 0 and first_tile.size[1] > 0
