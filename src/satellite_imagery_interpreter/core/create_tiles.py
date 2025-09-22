@@ -1,5 +1,6 @@
 from PIL import Image
 import numpy as np
+from pathlib import Path
 import os
 
 def create_tiles(aerial_img: Image, tile_size_m: float, overlap_m: float, zoom: int, OUTPUT_F: str) -> dict:
@@ -15,7 +16,9 @@ def create_tiles(aerial_img: Image, tile_size_m: float, overlap_m: float, zoom: 
         dict: Mapping from tile index to [y, x] coordinates of each tile's start position.
     """
 
-    tiles_f = os.path.join(OUTPUT_F, 'tiles')
+    tiles_f = Path(OUTPUT_F) / 'tiles'
+    os.mkdir(tiles_f)
+    
     aerial = np.array(aerial_img)
 
     aerial_width = int(aerial.shape[0])
@@ -42,5 +45,5 @@ def create_tiles(aerial_img: Image, tile_size_m: float, overlap_m: float, zoom: 
     # Save each tile as an image
     for i, tile in enumerate(tiles):
         im = Image.fromarray(tile)
-        im.save(os.path.join(tiles_f,f"tile_{i}.png"))
+        im.save(Path(tiles_f) / f"tile_{i}.png")
     return idx_coors
