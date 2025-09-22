@@ -178,4 +178,4 @@ models
 AI_Model_Training/model_training_data
 
 # Ignore all tiles
-tile_*.png
+*_*.png
